@@ -1,6 +1,6 @@
 import AppDataTable from "@/Components/Table/AppDataTable";
 import Master from "@/Layouts/Master";
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import { PackageSearch } from "lucide-react";
 import { useState } from "react";
 
@@ -21,30 +21,16 @@ const STATUS_STYLES = {
 
 export default function ReturnProducts({ returnProducts = [], auth }) {
     const [filterStatus, setFilterStatus] = useState("");
-    const [returnType, setReturnType] = useState("all");
 
-    const typeFiltered = returnProducts.filter((row) => {
-        if (returnType === "primary") return row.type === 1;
-        if (returnType === "secondary") return row.type === 2;
-        return true;
-    });
-
+    // Filter by status only
     const filteredReturnProducts =
         filterStatus === ""
-            ? typeFiltered
-            : typeFiltered.filter(
+            ? returnProducts
+            : returnProducts.filter(
                   (item) => String(item.status) === filterStatus
               );
 
-    const handleAction = (id, action) => {
-        if (!confirm(`Are you sure you want to ${action} this return?`)) return;
-
-        router.post(route("returnProducts.action", { id }), {
-            action,
-        });
-    };
-
-    const baseColumns = [
+    const columns = [
         {
             name: "Product Model",
             selector: (row) => row.stock?.product?.model ?? "—",
@@ -63,18 +49,6 @@ export default function ReturnProducts({ returnProducts = [], auth }) {
             sortable: true,
             minWidth: "150px",
         },
-    ];
-
-    if (returnType !== "primary") {
-        baseColumns.push({
-            name: "Retailer Name",
-            selector: (row) => row.retailer?.name ?? "—",
-            sortable: true,
-            minWidth: "180px",
-        });
-    }
-
-    baseColumns.push(
         {
             name: "Remarks",
             selector: (row) => row.remarks ?? "—",
@@ -102,35 +76,7 @@ export default function ReturnProducts({ returnProducts = [], auth }) {
                 </span>
             ),
         },
-        {
-            name: "Actions",
-            cell: (row) =>
-                row.status === 0 ? (
-                    <div className="flex gap-2">
-                        <button
-                            onClick={() => handleAction(row.id, "approve")}
-                            className="inline-flex items-center gap-1 bg-green-500 hover:bg-green-700 text-white px-3 py-1.5 text-sm rounded-lg font-medium transition"
-                        >
-                            Approve
-                        </button>
-                        <button
-                            onClick={() => handleAction(row.id, "decline")}
-                            className="inline-flex items-center gap-1 bg-red-500 hover:bg-red-700 text-white px-3 py-1.5 text-sm rounded-lg font-medium transition"
-                        >
-                            Decline
-                        </button>
-                    </div>
-                ) : (
-                    <span className="text-gray-400 text-sm">—</span>
-                ),
-            ignoreRowClick: true,
-            allowOverflow: true,
-            button: true,
-            minWidth: "200px",
-        }
-    );
-
-    const columns = baseColumns;
+    ];
 
     return (
         <Master auth={auth} title="Return Products">
@@ -138,6 +84,7 @@ export default function ReturnProducts({ returnProducts = [], auth }) {
 
             <div className="max-w-6xl mx-auto mt-10 px-4 sm:px-6 lg:px-8">
                 <div className="bg-white shadow-lg rounded-2xl p-8 border border-gray-200">
+                    {/* Header */}
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-3">
                             <PackageSearch
@@ -156,46 +103,14 @@ export default function ReturnProducts({ returnProducts = [], auth }) {
                         </div>
 
                         <Link
-                            href={route("returnProducts.create")}
+                            href={route("returnProductRequest.create")}
                             className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg shadow transition duration-150"
                         >
                             + Create Return Request
                         </Link>
                     </div>
 
-                    <div className="mb-6 flex gap-4">
-                        <button
-                            onClick={() => setReturnType("all")}
-                            className={`px-4 py-2 rounded-lg text-sm font-semibold border transition ${
-                                returnType === "all"
-                                    ? "bg-indigo-600 text-white border-indigo-600"
-                                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
-                            }`}
-                        >
-                            All Returns
-                        </button>
-                        <button
-                            onClick={() => setReturnType("primary")}
-                            className={`px-4 py-2 rounded-lg text-sm font-semibold border transition ${
-                                returnType === "primary"
-                                    ? "bg-indigo-600 text-white border-indigo-600"
-                                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
-                            }`}
-                        >
-                            Primary Sales Return
-                        </button>
-                        <button
-                            onClick={() => setReturnType("secondary")}
-                            className={`px-4 py-2 rounded-lg text-sm font-semibold border transition ${
-                                returnType === "secondary"
-                                    ? "bg-indigo-600 text-white border-indigo-600"
-                                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
-                            }`}
-                        >
-                            Secondary Sales Return
-                        </button>
-                    </div>
-
+                    {/* Status Filter */}
                     <div className="mb-6">
                         <label
                             htmlFor="statusFilter"
@@ -218,6 +133,7 @@ export default function ReturnProducts({ returnProducts = [], auth }) {
                         </select>
                     </div>
 
+                    {/* Table */}
                     <AppDataTable
                         columns={columns}
                         data={filteredReturnProducts}

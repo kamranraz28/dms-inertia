@@ -105,11 +105,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/products/return/create', [ReturnController::class, 'returnProductCreate'])->name('returnProducts.create');
     Route::post('/return-products/check-imei', [ReturnController::class, 'checkImei'])->name('returnProducts.checkImei');
     Route::post('/products/return/store', [ReturnController::class, 'returnProductStore'])->name('returnProducts.store');
+    Route::post('/return-products/{id}/action', [ReturnController::class, 'action'])->name('returnProducts.action');
 
     //Return Product Admin
     Route::get('/products/return-list', [ReturnController::class, 'returnProductList'])->name('products.returnList');
     Route::post('/return-products/{id}/approve', [ReturnController::class, 'approve']);
     Route::post('/return-products/{id}/decline', [ReturnController::class, 'decline']);
+
+    //Return Product Retailer
+    Route::get('/products/return-request', [ReturnController::class, 'returnProductRequest'])->name('products.returnRequest');
+    Route::get('/products/return-request/create', [ReturnController::class, 'returnProductRequestCreate'])->name('returnProductRequest.create');
+    Route::post('/return-product-requests/check-imei', [ReturnController::class, 'checkRequestedImei'])->name('returnProductRequest.checkImei');
+    Route::post('/products/return-requests/store', [ReturnController::class, 'returnProductRequestsStore'])->name('returnProductRequests.store');
 
     // Product, Brand, Category resource controllers
     Route::resource('products', ProductController::class);
