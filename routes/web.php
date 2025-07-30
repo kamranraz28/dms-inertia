@@ -162,6 +162,15 @@ Route::middleware(['auth'])->group(function () {
     */
     Route::middleware(['adminOrWarehouse'])->group(function () {
         Route::resource('stocks', StockController::class);
+
+        Route::prefix('reports')->group(function () {
+            Route::get('/primary-sales-report', [ReportController::class, 'primarySalesReport'])->name('reports.primarySales');
+            Route::get('/secondary-sales-report', [ReportController::class, 'secondarySalesReport'])->name('reports.secondarySales');
+            Route::get('/tertiary-sales-report', [ReportController::class, 'tertiarySalesReport'])->name('reports.tertiarySales');
+            Route::get('/dealer-imei-stock-report', [ReportController::class, 'dealerImeiStockReport'])->name('reports.dealerImeiStock');
+            Route::get('/retailer-imei-stock-report', [ReportController::class, 'retailerImeiStockReport'])->name('reports.retailerImeiStock');
+
+        });
     });
 
     /*

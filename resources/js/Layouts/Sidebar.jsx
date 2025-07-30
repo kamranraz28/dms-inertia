@@ -596,44 +596,88 @@ export default function Sidebar({ collapsed, onCollapseToggle, closeSidebar }) {
                 )}
                 {/* Reports */}
                 {permissions.includes("admin_reports") && (
-                <div>
-                    <button
-                        onClick={() => setReportOpen(!reportOpen)}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-left transition-all ${
-                            url.startsWith("/system-config")
-                                ? "bg-white/20 text-white font-semibold"
-                                : "hover:bg-white/10 text-white"
-                        }`}
-                        title={collapsed ? "System Configuration" : ""}
-                    >
-                        <div className="flex items-center gap-3">
-                            <Settings size={18} />
-                            {!collapsed && <span>Reports</span>}
-                        </div>
-                        {!collapsed &&
-                            (reportOpen ? (
-                                <ChevronUp size={16} />
-                            ) : (
-                                <ChevronDown size={16} />
-                            ))}
-                    </button>
+                    <div>
+                        <button
+                            onClick={() => setReportOpen(!reportOpen)}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-left transition-all ${
+                                url.startsWith("/reports")
+                                    ? "bg-white/20 text-white font-semibold"
+                                    : "hover:bg-white/10 text-white"
+                            }`}
+                            title={collapsed ? "Reports" : ""}
+                        >
+                            <div className="flex items-center gap-3">
+                                <Settings size={18} />
+                                {!collapsed && <span>Reports</span>}
+                            </div>
+                            {!collapsed &&
+                                (reportOpen ? (
+                                    <ChevronUp size={16} />
+                                ) : (
+                                    <ChevronDown size={16} />
+                                ))}
+                        </button>
 
-                    {!collapsed && reportOpen && (
-                        <div className="ml-8 mt-1 space-y-1">
-                            <Link
-                                href="reports/primary-and-secondary-dl-report"
-                                className={`block text-sm px-2 py-1 rounded-md ${
-                                    url.startsWith("/products")
-                                        ? "text-white font-semibold"
-                                        : "hover:bg-white/10 text-white"
-                                }`}
-                            >
-                                Primary & Secondary DL Report
-                            </Link>
+                        {!collapsed && reportOpen && (
+                            <div className="ml-8 mt-1 space-y-1">
+                                <Link
+                                    href="/reports/primary-sales-report"
+                                    className={`block text-sm px-2 py-1 rounded-md ${
+                                        url === "/reports/primary-sales-report"
+                                            ? "text-white font-semibold"
+                                            : "hover:bg-white/10 text-white"
+                                    }`}
+                                >
+                                    Primary Sales Report
+                                </Link>
 
-                        </div>
-                    )}
-                </div>
+                                <Link
+                                    href="/reports/secondary-sales-report"
+                                    className={`block text-sm px-2 py-1 rounded-md ${
+                                        url ===
+                                        "/reports/secondary-sales-report"
+                                            ? "text-white font-semibold"
+                                            : "hover:bg-white/10 text-white"
+                                    }`}
+                                >
+                                    Secondary Sales Report
+                                </Link>
+                                <Link
+                                    href="/reports/tertiary-sales-report"
+                                    className={`block text-sm px-2 py-1 rounded-md ${
+                                        url ===
+                                        "/reports/tertiary-sales-report"
+                                            ? "text-white font-semibold"
+                                            : "hover:bg-white/10 text-white"
+                                    }`}
+                                >
+                                    Tertiary Sales Report
+                                </Link>
+                                <Link
+                                    href="/reports/dealer-imei-stock-report"
+                                    className={`block text-sm px-2 py-1 rounded-md ${
+                                        url ===
+                                        "/reports/dealer-imei-stock-report"
+                                            ? "text-white font-semibold"
+                                            : "hover:bg-white/10 text-white"
+                                    }`}
+                                >
+                                    Dealer IMEI Stock Report
+                                </Link>
+                                <Link
+                                    href="/reports/retailer-imei-stock-report"
+                                    className={`block text-sm px-2 py-1 rounded-md ${
+                                        url ===
+                                        "/reports/retailer-imei-stock-report"
+                                            ? "text-white font-semibold"
+                                            : "hover:bg-white/10 text-white"
+                                    }`}
+                                >
+                                    Retailer IMEI Stock Report
+                                </Link>
+                            </div>
+                        )}
+                    </div>
                 )}
 
                 {/* Admin Product Return*/}
