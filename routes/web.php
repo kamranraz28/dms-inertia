@@ -43,23 +43,35 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
-    // Role, Permission, User CRUD
-    Route::resource('roles', RoleController::class);
-    Route::resource('permissions', PermissionController::class);
-    Route::resource('users', UserController::class);
+    Route::middleware(['admin'])->group(function () {
+        // Role, Permission, User CRUD
+        Route::resource('roles', RoleController::class);
+        Route::resource('permissions', PermissionController::class);
+        Route::resource('users', UserController::class);
+
+        // Settings routes
+        Route::get('/settings/logo', [SettingController::class, 'logoForm'])->name('settings.logo');
+        Route::post('/settings/logo', [SettingController::class, 'uploadLogo'])->name('settings.logo.upload');
+
+        Route::get('/settings/color', [SettingController::class, 'colorForm'])->name('settings.color');
+        // **IMPORTANT** - This was pointing to /settings/logo POST before, fixed to /settings/color POST
+        Route::post('/settings/color', [SettingController::class, 'updateColor'])->name('settings.color.upload');
+
+        // Product, Brand, Category resource controllers
+        Route::resource('products', ProductController::class);
+        Route::resource('brands', BrandController::class);
+        Route::resource('categories', CategoryController::class);
+
+        // Bulk upload routes
+        Route::get('/bulk-upload', [UploadController::class, 'index'])->name('bulk.upload.index');
+        Route::post('/bulk-upload', [UploadController::class, 'upload'])->name('bulk.upload');
+
+    });
 
     // Dealer-Retailer Mapping routes
     Route::get('/dealer-retailer-mapping', [UserController::class, 'dealerRetailerMapping'])->name('dealer-retailer-mapping');
     Route::get('/dealer-retailer/create', [UserController::class, 'createMapping'])->name('dealer-retailer.create');
     Route::post('/dealer-retailer/store', [UserController::class, 'storeMapping'])->name('mapping.store');
-
-    // Settings routes
-    Route::get('/settings/logo', [SettingController::class, 'logoForm'])->name('settings.logo');
-    Route::post('/settings/logo', [SettingController::class, 'uploadLogo'])->name('settings.logo.upload');
-
-    Route::get('/settings/color', [SettingController::class, 'colorForm'])->name('settings.color');
-    // **IMPORTANT** - This was pointing to /settings/logo POST before, fixed to /settings/color POST
-    Route::post('/settings/color', [SettingController::class, 'updateColor'])->name('settings.color.upload');
 
     // Orders resource & specific actions
     Route::resource('orders', OrderController::class);
@@ -118,15 +130,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/return-product-requests/check-imei', [ReturnController::class, 'checkRequestedImei'])->name('returnProductRequest.checkImei');
     Route::post('/products/return-requests/store', [ReturnController::class, 'returnProductRequestsStore'])->name('returnProductRequests.store');
 
-    // Product, Brand, Category resource controllers
-    Route::resource('products', ProductController::class);
-    Route::resource('brands', BrandController::class);
-    Route::resource('categories', CategoryController::class);
-
-    // Bulk upload routes
-    Route::get('/bulk-upload', [UploadController::class, 'index'])->name('bulk.upload.index');
-    Route::post('/bulk-upload', [UploadController::class, 'upload'])->name('bulk.upload');
-
     // Tertiary sales
     Route::get('/tertiary-sales', [RetailerController::class, 'tertiarySales'])->name('tertiary.sales.index');
     Route::post('/tertiary-sales', [RetailerController::class, 'storeTertiarySales'])->name('tertiary.sales.store');
@@ -144,4 +147,4 @@ Route::middleware('auth')->get('/test-auth', function () {
 });
 
 // Include the default auth routes
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
