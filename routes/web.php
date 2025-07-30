@@ -99,6 +99,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/products/verify', [ProductController::class, 'verify'])->name('products.verify');
     Route::post('/products/verify', [ProductController::class, 'verifyCheck'])->name('products.verify.check');
 
+    //Return Product
+    Route::get('/products/return', [ProductController::class, 'returnProduct'])->name('products.return');
+    Route::get('/products/return/create', [ProductController::class, 'returnProductCreate'])->name('returnProducts.create');
+    Route::post('/return-products/check-imei', [ProductController::class, 'checkImei'])->name('returnProducts.checkImei');
+    Route::post('/products/return/store', [ProductController::class, 'returnProductStore'])->name('returnProducts.store');
+
+
+
     // Product, Brand, Category resource controllers
     Route::resource('products', ProductController::class);
     Route::resource('brands', BrandController::class);

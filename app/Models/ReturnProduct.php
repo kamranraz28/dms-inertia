@@ -17,7 +17,8 @@ class ReturnProduct extends Model
         'stock_id',
         'type',
         'status',
-        'approve_by'
+        'approve_by',
+        'remarks'
     ];
 
     public function dealer()
@@ -26,7 +27,7 @@ class ReturnProduct extends Model
     }
     public function retailer()
     {
-        return $this->belongsTo(User::class, 'dealer_id');
+        return $this->belongsTo(User::class, 'retailer_id');
     }
     public function approveBy()
     {
@@ -34,7 +35,7 @@ class ReturnProduct extends Model
     }
     public function stock()
     {
-        return $this->belongsTo(User::class, 'stock_id');
+        return $this->belongsTo(Stock::class, 'stock_id');
     }
 
 }
