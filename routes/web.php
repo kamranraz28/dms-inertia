@@ -9,6 +9,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RetailerController;
+use App\Http\Controllers\ReturnController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StockController;
@@ -99,13 +100,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/products/verify', [ProductController::class, 'verify'])->name('products.verify');
     Route::post('/products/verify', [ProductController::class, 'verifyCheck'])->name('products.verify.check');
 
-    //Return Product
-    Route::get('/products/return', [ProductController::class, 'returnProduct'])->name('products.return');
-    Route::get('/products/return/create', [ProductController::class, 'returnProductCreate'])->name('returnProducts.create');
-    Route::post('/return-products/check-imei', [ProductController::class, 'checkImei'])->name('returnProducts.checkImei');
-    Route::post('/products/return/store', [ProductController::class, 'returnProductStore'])->name('returnProducts.store');
+    //Return Product Dealer
+    Route::get('/products/return', [ReturnController::class, 'returnProduct'])->name('products.return');
+    Route::get('/products/return/create', [ReturnController::class, 'returnProductCreate'])->name('returnProducts.create');
+    Route::post('/return-products/check-imei', [ReturnController::class, 'checkImei'])->name('returnProducts.checkImei');
+    Route::post('/products/return/store', [ReturnController::class, 'returnProductStore'])->name('returnProducts.store');
 
-
+    //Return Product Admin
+    Route::get('/products/return-list', [ReturnController::class, 'returnProductList'])->name('products.returnList');
+    Route::post('/return-products/{id}/approve', [ReturnController::class, 'approve']);
+    Route::post('/return-products/{id}/decline', [ReturnController::class, 'decline']);
 
     // Product, Brand, Category resource controllers
     Route::resource('products', ProductController::class);

@@ -57,12 +57,12 @@ export default function ReturnProducts({ returnProducts = [], auth }) {
             sortable: true,
             minWidth: "150px",
         },
-        {
-            name: "Dealer Name",
-            selector: (row) => row.dealer?.name ?? "—",
-            sortable: true,
-            minWidth: "180px",
-        },
+        // {
+        //     name: "Dealer Name",
+        //     selector: (row) => row.dealer?.name ?? "—",
+        //     sortable: true,
+        //     minWidth: "180px",
+        // },
     ];
 
     // Conditionally add retailer column for non-primary

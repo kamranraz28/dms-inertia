@@ -594,6 +594,29 @@ export default function Sidebar({ collapsed, onCollapseToggle, closeSidebar }) {
                     </Link>
                 )}
 
+                {/* Admin Product Return*/}
+                {permissions.includes("admin_return_product") && (
+                <Link
+                    href="/products/return-list"
+                    onClick={closeSidebar}
+                    className={`group flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
+                        url === "/products/return-list"
+                            ? "bg-white/20 text-white font-semibold"
+                            : "hover:bg-white/10 text-white"
+                    }`}
+                    title={collapsed ? "Return Product" : ""}
+                >
+                    <RotateCcw size={18} />
+                    <span
+                        className={`${
+                            collapsed ? "opacity-0 w-0" : "opacity-100 w-auto"
+                        } transition-all duration-300`}
+                    >
+                        Return Product
+                    </span>
+                </Link>
+                )}
+
                 {/* Dealer Product Return*/}
                 {permissions.includes("dealer_return_product") && (
                 <Link
