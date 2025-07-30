@@ -39,7 +39,7 @@ export default function ReturnProducts({ returnProducts = [], auth }) {
     const handleAction = (id, action) => {
         if (!confirm(`Are you sure you want to ${action} this return?`)) return;
 
-        router.post(route("returnProducts.action", { id }), {
+        router.post(route("returns.action", { id }), {
             action,
         });
     };
@@ -156,7 +156,7 @@ export default function ReturnProducts({ returnProducts = [], auth }) {
                         </div>
 
                         <Link
-                            href={route("returnProducts.create")}
+                            href={route("returns.create")}
                             className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg shadow transition duration-150"
                         >
                             + Create Return Request

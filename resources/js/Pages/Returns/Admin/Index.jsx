@@ -42,7 +42,7 @@ export default function ReturnProducts({ returnProducts = [], auth }) {
     const handleAction = (id, actionType) => {
         setProcessing(true);
         router.post(
-            `/return-products/${id}/${actionType}`,
+            `/returns/${id}/${actionType}`,
             {},
             {
                 onFinish: () => setProcessing(false),

@@ -597,10 +597,10 @@ export default function Sidebar({ collapsed, onCollapseToggle, closeSidebar }) {
                 {/* Admin Product Return*/}
                 {permissions.includes("admin_return_product") && (
                 <Link
-                    href="/products/return-list"
+                    href="/returns/list"
                     onClick={closeSidebar}
                     className={`group flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
-                        url === "/products/return-list"
+                        url === "/returns/list"
                             ? "bg-white/20 text-white font-semibold"
                             : "hover:bg-white/10 text-white"
                     }`}
@@ -620,10 +620,10 @@ export default function Sidebar({ collapsed, onCollapseToggle, closeSidebar }) {
                 {/* Dealer Product Return*/}
                 {permissions.includes("dealer_return_product") && (
                 <Link
-                    href="/products/return"
+                    href="/returns"
                     onClick={closeSidebar}
                     className={`group flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
-                        url === "/products/return"
+                        url === "/returns"
                             ? "bg-white/20 text-white font-semibold"
                             : "hover:bg-white/10 text-white"
                     }`}
@@ -643,10 +643,10 @@ export default function Sidebar({ collapsed, onCollapseToggle, closeSidebar }) {
                 {/* Admin Product Return*/}
                 {permissions.includes("retailer_return_product") && (
                 <Link
-                    href="/products/return-request"
+                    href="/returns/request"
                     onClick={closeSidebar}
                     className={`group flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
-                        url === "/products/return-request"
+                        url === "/returns/request"
                             ? "bg-white/20 text-white font-semibold"
                             : "hover:bg-white/10 text-white"
                     }`}

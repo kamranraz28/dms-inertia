@@ -103,7 +103,7 @@ export default function ReturnProducts({ returnProducts = [], auth }) {
                         </div>
 
                         <Link
-                            href={route("returnProductRequest.create")}
+                            href={route("returns.request.create")}
                             className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg shadow transition duration-150"
                         >
                             + Create Return Request

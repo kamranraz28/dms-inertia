@@ -46,7 +46,7 @@ export default function CreateReturnProducts({ auth }) {
 
         try {
             const response = await axios.post(
-                route("returnProductRequest.checkImei"),
+                route("returns.request.checkImei"),
                 {
                     imei: imeiValue,
                 }
@@ -97,7 +97,7 @@ export default function CreateReturnProducts({ auth }) {
             return;
         }
 
-        post(route("returnProductRequests.store"), {
+        post(route("returns.request.store"), {
             onSuccess: () => reset("imeis", "remarks"),
         });
     }
