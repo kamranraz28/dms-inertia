@@ -75,6 +75,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(Tersale::class);
     }
+    public function returnDealers()
+    {
+        return $this->hasMany(ReturnProduct::class, 'dealer_id');
+    }
+    public function returnRetailers()
+    {
+        return $this->hasMany(ReturnProduct::class, 'retailer_id');
+    }
+    public function returnApproval()
+    {
+        return $this->hasMany(ReturnProduct::class, 'approve_by');
+    }
 
 
 

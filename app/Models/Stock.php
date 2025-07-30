@@ -36,4 +36,8 @@ class Stock extends Model
     {
         return $this->hasMany(Tersale::class);
     }
+    public function returnProduct()
+    {
+        return $this->hasOne(ReturnProduct::class);
+    }
 }
