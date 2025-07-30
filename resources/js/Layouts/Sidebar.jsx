@@ -16,7 +16,7 @@ import {
     ShieldCheck,
     ShoppingCart,
     UploadCloud,
-    User
+    User,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -28,7 +28,8 @@ export default function Sidebar({ collapsed, onCollapseToggle, closeSidebar }) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [userConfigOpen, setUserConfigOpen] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
-    const [systemConfigOpen, setSystemConfigOpen] = useState(false); // Add state for systemConfigOpen
+    const [systemConfigOpen, setSystemConfigOpen] = useState(false);
+    const [reportOpen, setReportOpen] = useState(false);
     const dropdownRef = useRef();
     const permissions = props.auth.permissions || []; // Add this line
 
@@ -593,74 +594,121 @@ export default function Sidebar({ collapsed, onCollapseToggle, closeSidebar }) {
                         </span>
                     </Link>
                 )}
+                {/* Reports */}
+                {permissions.includes("admin_reports") && (
+                <div>
+                    <button
+                        onClick={() => setReportOpen(!reportOpen)}
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-left transition-all ${
+                            url.startsWith("/system-config")
+                                ? "bg-white/20 text-white font-semibold"
+                                : "hover:bg-white/10 text-white"
+                        }`}
+                        title={collapsed ? "System Configuration" : ""}
+                    >
+                        <div className="flex items-center gap-3">
+                            <Settings size={18} />
+                            {!collapsed && <span>Reports</span>}
+                        </div>
+                        {!collapsed &&
+                            (reportOpen ? (
+                                <ChevronUp size={16} />
+                            ) : (
+                                <ChevronDown size={16} />
+                            ))}
+                    </button>
+
+                    {!collapsed && reportOpen && (
+                        <div className="ml-8 mt-1 space-y-1">
+                            <Link
+                                href="reports/primary-and-secondary-dl-report"
+                                className={`block text-sm px-2 py-1 rounded-md ${
+                                    url.startsWith("/products")
+                                        ? "text-white font-semibold"
+                                        : "hover:bg-white/10 text-white"
+                                }`}
+                            >
+                                Primary & Secondary DL Report
+                            </Link>
+
+                        </div>
+                    )}
+                </div>
+                )}
 
                 {/* Admin Product Return*/}
                 {permissions.includes("admin_return_product") && (
-                <Link
-                    href="/returns/list"
-                    onClick={closeSidebar}
-                    className={`group flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
-                        url === "/returns/list"
-                            ? "bg-white/20 text-white font-semibold"
-                            : "hover:bg-white/10 text-white"
-                    }`}
-                    title={collapsed ? "Return Product" : ""}
-                >
-                    <RotateCcw size={18} />
-                    <span
-                        className={`${
-                            collapsed ? "opacity-0 w-0" : "opacity-100 w-auto"
-                        } transition-all duration-300`}
+                    <Link
+                        href="/returns/list"
+                        onClick={closeSidebar}
+                        className={`group flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
+                            url === "/returns/list"
+                                ? "bg-white/20 text-white font-semibold"
+                                : "hover:bg-white/10 text-white"
+                        }`}
+                        title={collapsed ? "Return Product" : ""}
                     >
-                        Return Product
-                    </span>
-                </Link>
+                        <RotateCcw size={18} />
+                        <span
+                            className={`${
+                                collapsed
+                                    ? "opacity-0 w-0"
+                                    : "opacity-100 w-auto"
+                            } transition-all duration-300`}
+                        >
+                            Return Product
+                        </span>
+                    </Link>
                 )}
 
                 {/* Dealer Product Return*/}
                 {permissions.includes("dealer_return_product") && (
-                <Link
-                    href="/returns"
-                    onClick={closeSidebar}
-                    className={`group flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
-                        url === "/returns"
-                            ? "bg-white/20 text-white font-semibold"
-                            : "hover:bg-white/10 text-white"
-                    }`}
-                    title={collapsed ? "Return Product" : ""}
-                >
-                    <RotateCcw size={18} />
-                    <span
-                        className={`${
-                            collapsed ? "opacity-0 w-0" : "opacity-100 w-auto"
-                        } transition-all duration-300`}
+                    <Link
+                        href="/returns"
+                        onClick={closeSidebar}
+                        className={`group flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
+                            url === "/returns"
+                                ? "bg-white/20 text-white font-semibold"
+                                : "hover:bg-white/10 text-white"
+                        }`}
+                        title={collapsed ? "Return Product" : ""}
                     >
-                        Return Product
-                    </span>
-                </Link>
+                        <RotateCcw size={18} />
+                        <span
+                            className={`${
+                                collapsed
+                                    ? "opacity-0 w-0"
+                                    : "opacity-100 w-auto"
+                            } transition-all duration-300`}
+                        >
+                            Return Product
+                        </span>
+                    </Link>
                 )}
 
                 {/* Admin Product Return*/}
                 {permissions.includes("retailer_return_product") && (
-                <Link
-                    href="/returns/request"
-                    onClick={closeSidebar}
-                    className={`group flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
-                        url === "/returns/request"
-                            ? "bg-white/20 text-white font-semibold"
-                            : "hover:bg-white/10 text-white"
-                    }`}
-                    title={collapsed ? "Return Product" : ""}
-                >
-                    <RotateCcw size={18} />
-                    <span
-                        className={`${
-                            collapsed ? "opacity-0 w-0" : "opacity-100 w-auto"
-                        } transition-all duration-300`}
+                    <Link
+                        href="/returns/request"
+                        onClick={closeSidebar}
+                        className={`group flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
+                            url === "/returns/request"
+                                ? "bg-white/20 text-white font-semibold"
+                                : "hover:bg-white/10 text-white"
+                        }`}
+                        title={collapsed ? "Return Product" : ""}
                     >
-                        Return Product
-                    </span>
-                </Link>
+                        <RotateCcw size={18} />
+                        <span
+                            className={`${
+                                collapsed
+                                    ? "opacity-0 w-0"
+                                    : "opacity-100 w-auto"
+                            } transition-all duration-300`}
+                        >
+                            Return Product
+                        </span>
+                    </Link>
                 )}
 
                 {/* Verify Product NavLink */}
@@ -684,8 +732,6 @@ export default function Sidebar({ collapsed, onCollapseToggle, closeSidebar }) {
                         Verify Product
                     </span>
                 </Link>
-
-
 
                 {/* Debug: Show permissions */}
                 {/* <pre style={{ color: "black", background: "white" }}>

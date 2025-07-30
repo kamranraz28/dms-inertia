@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -85,6 +86,12 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/{id}/approve', [ReturnController::class, 'approve'])->name('returns.approve');
             Route::post('/{id}/decline', [ReturnController::class, 'decline'])->name('returns.decline');
         });
+
+        Route::prefix('reports')->group(function () {
+            Route::get('/primary-and-secondary-dl-report', [ReportController::class, 'primaryAndSecondaryDlReport'])->name('reports.psdl');
+
+        });
+
 
     });
 
