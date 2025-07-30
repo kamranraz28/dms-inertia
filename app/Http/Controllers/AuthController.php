@@ -7,6 +7,7 @@ use App\Models\Cat;
 use App\Models\Order;
 use App\Models\Prisale;
 use App\Models\Product;
+use App\Models\ReturnProduct;
 use App\Models\Secsale;
 use App\Models\Stock;
 use App\Models\Tersale;
@@ -102,6 +103,7 @@ class AuthController extends Controller
             'retailerCurrentStock' => $retailerCurrentStockCount,
             'totalDealerPurchase' => $totalDealerPurchase,
             'totalRetailerPurchase' => $totalRetailerPurchase,
+            'totalReturn' => ReturnProduct::count(),
         ]);
     }
 

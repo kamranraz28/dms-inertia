@@ -9,6 +9,7 @@ import {
     Layers,
     LayoutGrid,
     PackageCheck,
+    RotateCcw,
     ShoppingBag,
     ShoppingCart,
     Truck,
@@ -46,6 +47,7 @@ export default function Dashboard({
     retailerCurrentStock,
     totalDealerPurchase,
     totalRetailerPurchase,
+    totalReturn,
 }) {
     const flowData = [
         {
@@ -145,6 +147,13 @@ export default function Dashboard({
             icon: <Truck className="text-white" />,
             color: "bg-violet-600",
             permission: "dashboard_retailer_stock",
+        },
+        {
+            title: "Product Return Request",
+            value: totalReturn,
+            icon: <RotateCcw className="text-white" />,
+            color: "bg-violet-900",
+            permission: "dashboard_total_return",
         },
     ];
 
