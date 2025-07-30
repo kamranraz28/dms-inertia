@@ -12,8 +12,21 @@ export default function AppDataTable({ columns, data, title = "Data Table" }) {
         JSON.stringify(item).toLowerCase().includes(filterText.toLowerCase())
     );
 
+    const getExportData = () =>
+        filteredData.map((row) =>
+            Object.fromEntries(
+                columns.map((col) => [
+                    col.name,
+                    typeof col.selector === "function"
+                        ? col.selector(row)
+                        : row[col.selector],
+                ])
+            )
+        );
+
     const exportToExcel = () => {
-        const worksheet = XLSX.utils.json_to_sheet(filteredData);
+        const exportData = getExportData();
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, title);
         const excelBuffer = XLSX.write(workbook, {
@@ -27,7 +40,8 @@ export default function AppDataTable({ columns, data, title = "Data Table" }) {
     };
 
     const exportToCSV = () => {
-        const worksheet = XLSX.utils.json_to_sheet(filteredData);
+        const exportData = getExportData();
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
         const csv = XLSX.utils.sheet_to_csv(worksheet);
         const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
         saveAs(blob, `${title}.csv`);
