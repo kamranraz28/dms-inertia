@@ -89,6 +89,8 @@ Route::middleware(['auth'])->group(function () {
 
         Route::prefix('reports')->group(function () {
             Route::get('/primary-and-secondary-dl-report', [ReportController::class, 'primaryAndSecondaryDlReport'])->name('reports.psdl');
+            Route::get('/imei-life-cycle-report', [ReportController::class, 'imeiLifeCycleReport'])->name('reports.imeiLifeCycleReport');
+            Route::post('/imei-life-cycle-report', [ReportController::class, 'imeiLifeCycleReportSearch'])->name('reports.imeiLifeCycleReportSearch');
 
         });
 

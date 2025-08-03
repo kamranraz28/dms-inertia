@@ -676,6 +676,17 @@ export default function Sidebar({ collapsed, onCollapseToggle, closeSidebar }) {
                                 >
                                     Retailer IMEI Stock Report
                                 </Link>
+                                 <Link
+                                    href="/reports/imei-life-cycle-report"
+                                    className={`block text-sm px-2 py-1 rounded-md ${
+                                        url ===
+                                        "/reports/imei-life-cycle-report"
+                                            ? "text-white font-semibold"
+                                            : "hover:bg-white/10 text-white"
+                                    }`}
+                                >
+                                    IMEI Life Cycle Report
+                                </Link>
                             </div>
                         )}
                     </div>
