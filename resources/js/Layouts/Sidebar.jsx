@@ -1,5 +1,6 @@
 import { Link, usePage } from "@inertiajs/react";
 import {
+    BadgeCheck,
     BadgeDollarSign,
     Boxes,
     ChevronDown,
@@ -755,7 +756,26 @@ export default function Sidebar({ collapsed, onCollapseToggle, closeSidebar }) {
                     </Link>
                 )}
 
-                {/* Verify Product NavLink */}
+                {/* Warranty Check NavLink */}
+                <Link
+                    href="/check-warranty"
+                    onClick={closeSidebar}
+                    className={`group flex items-center gap-3 px-3 py-2 rounded-md transition-all ${
+                        url === "/check-warranty"
+                            ? "bg-white/20 text-white font-semibold"
+                            : "hover:bg-white/10 text-white"
+                    }`}
+                    title={collapsed ? "Warranty Check" : ""}
+                >
+                    <BadgeCheck size={18} />
+                    <span
+                        className={`${
+                            collapsed ? "opacity-0 w-0" : "opacity-100 w-auto"
+                        } transition-all duration-300`}
+                    >
+                        Warranty Check
+                    </span>
+                </Link>
 
                 <Link
                     href="/products/verify"

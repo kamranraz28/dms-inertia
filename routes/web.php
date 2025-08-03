@@ -194,6 +194,11 @@ Route::middleware(['auth'])->group(function () {
     */
     Route::get('/tertiary-sales', [RetailerController::class, 'tertiarySales'])->name('tertiary.sales.index');
     Route::post('/tertiary-sales', [RetailerController::class, 'storeTertiarySales'])->name('tertiary.sales.store');
+
+    Route::get('/check-warranty', [ProductController::class, 'checkWarranty'])->name('warranty.check');
+    Route::post('/check-warranty', [ProductController::class, 'verifyWarranty'])->name('warranty.verify');
+
+
 });
 
 // Debug/Test route
