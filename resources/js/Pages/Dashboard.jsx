@@ -16,6 +16,7 @@ import {
     Users,
     Warehouse,
 } from "lucide-react";
+
 import {
     CartesianGrid,
     Cell,
@@ -172,52 +173,59 @@ export default function Dashboard({
     return (
         <Master auth={auth} title="Dashboard">
             <Head title="Dashboard" />
-
             <div className="space-y-10">
-                {/* Cards Section */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {/* Animated Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-4 gap-6">
                     {flowData
-                        .filter((item) => {
-                            return (
+                        .filter(
+                            (item) =>
                                 !item.permission ||
                                 auth.permissions.includes(item.permission)
-                            );
-                        })
+                        )
                         .map((item, idx) => (
                             <motion.div
                                 key={idx}
-                                initial={{ opacity: 0, y: 30 }}
+                                initial={{ opacity: 0, y: 40 }}
                                 animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.1 * idx }}
-                                className={`rounded-2xl shadow-xl p-5 flex items-center gap-4 ${item.color}`}
+                                transition={{ delay: idx * 0.05 }}
+                                whileHover={{ scale: 1.04 }}
+                                className={`rounded-xl p-5 transition-all duration-300 text-white shadow-2xl bg-gradient-to-br ${item.color} relative overflow-hidden backdrop-blur-sm border border-white/20`}
                             >
-                                <div className="p-3 rounded-full bg-white/20">
-                                    {item.icon}
-                                </div>
-                                <div>
-                                    <div className="text-white text-xl font-bold">
-                                        {item.value}
+                                <div className="absolute top-0 right-0 w-16 h-16 bg-white/10 blur-2xl rotate-45 rounded-full -mt-8 -mr-8" />
+                                <div className="flex items-center gap-4 z-10 relative">
+                                    <div className="p-3 rounded-full bg-white/20 text-white text-xl shadow-md hover:scale-110 transition">
+                                        {item.icon}
                                     </div>
-                                    <div className="text-white text-sm">
-                                        {item.title}
+                                    <div>
+                                        <div className="text-2xl font-bold">
+                                            {item.value}
+                                        </div>
+                                        <div className="text-sm">
+                                            {item.title}
+                                        </div>
                                     </div>
                                 </div>
                             </motion.div>
                         ))}
                 </div>
 
-                {/* Analytics Section */}
+                {/* Chart Section */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {auth.permissions.includes("dashboard_sales_overview") && (
-                        <div className="col-span-2 bg-white rounded-2xl shadow p-5">
-                            <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                        <motion.div
+                            initial={{ opacity: 0, x: -50 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.6 }}
+                            className="col-span-2 bg-white rounded-xl shadow-xl p-6"
+                        >
+                            <h3 className="text-lg font-semibold text-gray-800 mb-4">
                                 Sales Overview
                             </h3>
-                            <ResponsiveContainer width="100%" height={250}>
+                            <ResponsiveContainer width="100%" height={300}>
                                 <LineChart data={lineChartData}>
                                     <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
+                                    <XAxis dataKey="name" stroke="#334155" />
+                                    <YAxis stroke="#334155" />
                                     <Tooltip />
                                     <Line
                                         type="monotone"
@@ -227,26 +235,36 @@ export default function Dashboard({
                                     />
                                 </LineChart>
                             </ResponsiveContainer>
-                        </div>
+                        </motion.div>
                     )}
+
                     {auth.permissions.includes(
                         "dashboard_distribution_ratio"
                     ) && (
-                        <div className="bg-white rounded-2xl shadow p-5">
-                            <h3 className="text-lg font-semibold text-gray-700 mb-4">
+                        <motion.div
+                            initial={{ opacity: 0, x: 50 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.6 }}
+                            className="bg-white rounded-xl shadow-xl p-6"
+                        >
+                            <h3 className="text-lg font-semibold text-gray-800 mb-4">
                                 Distribution Ratio
                             </h3>
-                            <ResponsiveContainer width="100%" height={250}>
+                            <ResponsiveContainer width="100%" height={300}>
                                 <PieChart>
                                     <Pie
                                         data={pieData}
                                         cx="50%"
                                         cy="50%"
-                                        innerRadius={50}
-                                        outerRadius={80}
-                                        paddingAngle={3}
+                                        innerRadius={60}
+                                        outerRadius={90}
+                                        paddingAngle={4}
                                         dataKey="value"
-                                        label
+                                        label={({ name, percent }) =>
+                                            `${name} ${(percent * 100).toFixed(
+                                                0
+                                            )}%`
+                                        }
                                     >
                                         {pieData.map((entry, index) => (
                                             <Cell
@@ -262,7 +280,7 @@ export default function Dashboard({
                                     <Tooltip />
                                 </PieChart>
                             </ResponsiveContainer>
-                        </div>
+                        </motion.div>
                     )}
                 </div>
             </div>
