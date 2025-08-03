@@ -53,8 +53,10 @@ class SettingController extends Controller
         $settings = Setting::first(); // assumes only one settings row
 
         return inertia('Settings/ApplicationColor', [
-            'header_color' => $settings?->header_color ?? '#ffffff',
-            'sidebar_color' => $settings?->sidebar_color ?? '#000000',
+            'settings' => [
+                'header_color' => $settings?->header_color ?? '#ffffff',
+                'sidebar_color' => $settings?->sidebar_color ?? '#000000',
+            ],
         ]);
     }
 
