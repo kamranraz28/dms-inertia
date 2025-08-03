@@ -45,7 +45,7 @@ export default function PermissionIndex({ auth, permissions }) {
     <Master auth={auth} title="Permissions">
       <Head title="Permissions" />
 
-      <div className="max-w-6xl mx-auto mt-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto mt-1 px-0 sm:px-6 lg:px-0">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <ShieldCheck className="text-indigo-600" size={28} />

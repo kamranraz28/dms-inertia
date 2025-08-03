@@ -79,7 +79,7 @@ export default function ProductsIndex({ products, auth }) {
     <Master auth={auth} title="Products">
       <Head title="Products Management" />
 
-      <div className="max-w-6xl mx-auto mt-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto mt-1 px-0 sm:px-6 lg:px-0">
         <div className="bg-white shadow-lg rounded-2xl p-8 border border-gray-200">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-800">Manage Products</h2>

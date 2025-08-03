@@ -98,7 +98,7 @@ export default function ReceiveProduct({ products = [], auth }) {
     <Master auth={auth} title="Receive Products">
       <Head title="Pending Receive Products" />
 
-      <div className="max-w-6xl mx-auto mt-10 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto mt-1 px-0 sm:px-6 lg:px-0">
         <div className="bg-white shadow-lg rounded-2xl p-8 border border-gray-200">
           {/* Header */}
           <div className="mb-6">
