@@ -117,7 +117,7 @@ class ReportController extends Controller
     $records[] = [
         'stage' => 'Stock Received',
         'user' => 'Warehouse',
-        'location' => 'N/A',
+        'location' => 'Warehouse',
         'date' => $stock->created_at->format('Y-m-d H:i:s'),
         'remarks' => 'Product stocked in system',
     ];
@@ -126,7 +126,7 @@ class ReportController extends Controller
     foreach ($stock->prisales as $primarySale) {
         if ($primarySale->user) {
             $records[] = [
-                'stage' => 'Primary Sale',
+                'stage' => 'Primary Sale (Dealer)',
                 'user' => $primarySale->user->name,
                 'location' => $primarySale->user->office_id,
                 'date' => $primarySale->created_at->format('Y-m-d H:i:s'),
@@ -139,7 +139,7 @@ class ReportController extends Controller
     foreach ($stock->secsales as $secondarySale) {
         if ($secondarySale->retailer) {
             $records[] = [
-                'stage' => 'Secondary Sale',
+                'stage' => 'Secondary Sale (Retailer)',
                 'user' => $secondarySale->retailer->name,
                 'location' => $secondarySale->retailer->office_id,
                 'date' => $secondarySale->created_at->format('Y-m-d H:i:s'),
@@ -151,7 +151,7 @@ class ReportController extends Controller
     // Step 4: Tertiary Sales (loop)
     foreach ($stock->tersales as $tertiarySale) {
         $records[] = [
-            'stage' => 'Tertiary Sale',
+            'stage' => 'Tertiary Sale (Customer)',
             'user' => $tertiarySale->name,
             'location' => $tertiarySale->phone,
             'date' => $tertiarySale->created_at->format('Y-m-d H:i:s'),
