@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreOrderRequest;
 use App\Models\Order;
 use App\Models\Product;
+use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +13,12 @@ use App\Models\OrderDetail;
 
 class OrderController extends Controller
 {
+    protected $orderService;
+
+    public function __construct(OrderService $orderService)
+    {
+        $this->orderService = $orderService;
+    }
     //
     public function index()
     {
@@ -41,48 +49,18 @@ class OrderController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreOrderRequest $request)
     {
-        // Validate input
-        $validated = $request->validate([
-            'items' => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer|min:1',
-            'remarks' => 'nullable|string|max:500',
-        ]);
-
-        // Start transaction to ensure data integrity
-        DB::beginTransaction();
-
         try {
-            // Create order header
-            $order = Order::create([
-                'user_id' => auth()->id(),
-                'order_by' => auth()->id(),
-                'remarks' => $validated['remarks'] ?? null,
-            ]);
+            $this->orderService->createOrder(
+                auth()->id(),
+                $request->validated()['items'],
+                $request->validated()['remarks'] ?? null
+            );
 
-            // Loop through each item and create order details
-            foreach ($validated['items'] as $item) {
-                $product = Product::findOrFail($item['product_id']);
-
-                $price = $product->dp;
-                $quantity = $item['quantity'];
-
-                // Create order detail
-                OrderDetail::create([
-                    'order_id' => $order->id,
-                    'product_id' => $product->id,
-                    'quantity' => $quantity,
-                    'price' => $price,
-                ]);
-            }
-
-            DB::commit();
-
-            return redirect()->route('orders.index')->with('success', 'Order created successfully!');
+            return redirect()->route('orders.index')
+                ->with('success', 'Order created successfully!');
         } catch (\Exception $e) {
-            DB::rollBack();
             return back()->withErrors('Failed to create order: ' . $e->getMessage());
         }
     }
