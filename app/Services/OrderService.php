@@ -23,6 +23,16 @@ class OrderService
         $this->productRepo = $productRepo;
     }
 
+    public function allOrders()
+    {
+        return $this->orderRepo->all();
+    }
+
+    public function pendingOrders()
+    {
+        return $this->orderRepo->pendingOrders();
+    }
+
     public function createOrder(int $userId, array $items, ?string $remarks = null)
     {
         DB::beginTransaction();

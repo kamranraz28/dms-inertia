@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreOrderRequest;
 use App\Models\Order;
 use App\Models\Product;
+use App\Repositories\ProductRepository;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,38 +15,32 @@ use App\Models\OrderDetail;
 class OrderController extends Controller
 {
     protected $orderService;
+    protected $productRepository;
 
-    public function __construct(OrderService $orderService)
+    public function __construct(OrderService $orderService, ProductRepository $productRepository)
     {
         $this->orderService = $orderService;
+        $this->productRepository = $productRepository;
     }
     //
     public function index()
     {
-        $orders = Order::with('user') // optional: eager load related user if needed
-            ->latest()
-            ->get();
-
         return Inertia::render('Orders/Index', [
-            'orders' => $orders,
+            'orders' => $this->orderService->allOrders(),
         ]);
     }
 
     public function show($id)
     {
-        $order = Order::with(['details.product', 'user'])->findOrFail($id);
-
         return Inertia::render('Orders/Show', [
-            'order' => $order,
+            'order' => $this->orderService->allOrders()->find($id),
         ]);
     }
 
     public function create()
     {
-        $products = Product::all();
-
         return Inertia::render('Orders/Create', [
-            'products' => $products,
+            'products' => $this->productRepository->all(),
         ]);
     }
 
@@ -67,13 +62,8 @@ class OrderController extends Controller
 
     public function orderList()
     {
-        $orders = Order::with('user')
-            ->where('status', '!=', 0)
-            ->latest()
-            ->get();
-
         return Inertia::render('Accounts/OrderList', [
-            'orders' => $orders,
+            'orders' => $this->orderService->pendingOrders(),
         ]);
     }
 
