@@ -2,32 +2,35 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Brand\StoreBrandRequest;
+use App\Http\Requests\Brand\UpdateBrandRequest;
 use App\Models\Brand;
-use Illuminate\Http\Request;
+use App\Services\BrandService;
 use Inertia\Inertia;
 
 class BrandController extends Controller
 {
+    protected $brandService;
+
+    public function __construct(BrandService $brandService)
+    {
+        $this->brandService = $brandService;
+    }
+
     //
     public function index()
     {
-        $brands = Brand::all();
         return Inertia::render('Brands/Index', [
-            'brands' => $brands,
+            'brands' => $this->brandService->allBrands(),
         ]);
     }
     public function create()
     {
         return Inertia::render('Brands/Create');
     }
-    public function store(Request $request)
+    public function store(StoreBrandRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
-
-        Brand::create($request->all());
-
+        $this->brandService->createBrand($request->validated());
         return redirect()->route('brands.index')->with('success', 'Brand created successfully.');
     }
     public function edit(Brand $brand)
@@ -36,19 +39,15 @@ class BrandController extends Controller
             'brand' => $brand,
         ]);
     }
-    public function update(Request $request, Brand $brand)
+    public function update(UpdateBrandRequest $request, Brand $brand)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
-
-        $brand->update($request->all());
+        $this->brandService->updateBrand($brand, $request->validated());
 
         return redirect()->route('brands.index')->with('success', 'Brand updated successfully.');
     }
     public function destroy(Brand $brand)
     {
-        $brand->delete();
+        $this->brandService->deleteBrand($brand);
 
         return redirect()->route('brands.index')->with('success', 'Brand deleted successfully.');
     }
