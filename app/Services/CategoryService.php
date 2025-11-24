@@ -16,7 +16,7 @@ class CategoryService
 
     public function getAllCategories()
     {
-        return $repo->all();
+        return $this->repo->all();
     }
 
     public function createCategory(array $data)
