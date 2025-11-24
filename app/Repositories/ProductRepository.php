@@ -10,6 +10,10 @@ class ProductRepository
     {
         return Product::with('cat', 'brand')->get();
     }
+    public function find(int $id)
+    {
+        return Product::findOrFail($id);
+    }
     public function create(array $data)
     {
         return Product::create($data);
