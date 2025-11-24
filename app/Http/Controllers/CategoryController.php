@@ -2,56 +2,64 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Category\StoreCategoryRequest;
+use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Models\Cat;
-use Illuminate\Http\Request;
+use App\Services\CategoryService;
 use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
-    //
+    protected $service;
+
+    public function __construct(CategoryService $service)
+    {
+        $this->service = $service;
+    }
+
     public function index()
     {
-        $categories = Cat::all();
         return Inertia::render('Categories/Index', [
-            'categories' => $categories,
+            'categories' => $this->service->getAllCategories(),
         ]);
     }
+
     public function create()
     {
         return Inertia::render('Categories/Create');
     }
-    public function store(Request $request)
+
+    public function store(StoreCategoryRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+        $this->service->createCategory($request->validated());
 
-        Cat::create($request->all());
-
-        return redirect()->route('categories.index')->with('success', 'Category created successfully.');
+        return redirect()
+            ->route('categories.index')
+            ->with('success', 'Category created successfully.');
     }
-    public function edit($id)
+
+    public function edit(Cat $category)
     {
-        $category = Cat::findOrFail($id);
         return Inertia::render('Categories/Edit', [
             'category' => $category,
         ]);
     }
-    public function update(Request $request, $id)
+
+    public function update(UpdateCategoryRequest $request, Cat $category)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-        ]);
+        $this->service->updateCategory($category, $request->validated());
 
-        $category = Cat::findOrFail($id);
-        $category->update($request->all());
-
-        return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
+        return redirect()
+            ->route('categories.index')
+            ->with('success', 'Category updated successfully.');
     }
-    public function destroy($id)
+
+    public function destroy(Cat $category)
     {
-        $category = Cat::findOrFail($id);
-        $category->delete();
-        return redirect()->route('categories.index')->with('success', 'Category deleted successfully.');
+        $this->service->deleteCategory($category);
+
+        return redirect()
+            ->route('categories.index')
+            ->with('success', 'Category deleted successfully.');
     }
 }
