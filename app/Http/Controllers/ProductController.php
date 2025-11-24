@@ -10,6 +10,7 @@ use App\Models\ReturnProduct;
 use App\Models\Secsale;
 use App\Models\Stock;
 use App\Models\Tersale;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
@@ -17,15 +18,19 @@ use Carbon\Carbon;
 
 class ProductController extends Controller
 {
+    protected $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
     //
     public function index()
     {
-        // Logic to list products
-        $products = Product::with('cat', 'brand')->get();
         return Inertia::render(
             'Products/Index',
             [
-                'products' => $products,
+                'products' => $this->productService->allProducts(),
             ]
         );
     }
