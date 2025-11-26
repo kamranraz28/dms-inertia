@@ -20,10 +20,7 @@ class StockService
 
     public function stocksByImei($imei)
     {
-        return $this->stockRepository->allStocks()
-            ->where('imei1', $imei)
-            ->orWhere('imei2', $imei)
-            ->first();
+        return $this->stockRepository->findStockByImei($imei);
     }
 
     public function statusUpdate($stock, $status)
