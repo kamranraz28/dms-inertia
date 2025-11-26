@@ -10,4 +10,9 @@ class TertiaryRepository
     {
         return Tersale::with('stock.product', 'user')->get();
     }
+
+    public function create(array $data)
+    {
+        return Tersale::create($data);
+    }
 }

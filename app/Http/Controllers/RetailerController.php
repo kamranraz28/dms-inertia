@@ -2,24 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\WarrantyActivated;
-use App\Models\Secsale;
-use App\Models\Stock;
-use App\Models\Tersale;
+use App\Http\Requests\Sale\StoreTertiarySaleRequest;
+use App\Services\RetailerService;
+use App\Services\StockService;
+use App\Services\TertiarySaleService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class RetailerController extends Controller
 {
+    protected $retailerService, $stockService, $tertiarySaleService;
+
+    public function __construct(RetailerService $retailerService, StockService $stockService, TertiarySaleService $tertiarySaleService)
+    {
+        $this->retailerService = $retailerService;
+        $this->stockService = $stockService;
+        $this->tertiarySaleService = $tertiarySaleService;
+    }
     //
     public function myStocks()
     {
-        $stocks = Secsale::with('stock.product')
-            ->where('retailer_id', auth()->id())
-            ->get();
-
         return Inertia::render('Retailers/Stocks', [
-            'stocks' => $stocks,
+            'stocks' => $this->retailerService->stocksByRetailer(auth()->id()),
         ]);
     }
     public function tertiarySales()
@@ -31,9 +35,7 @@ class RetailerController extends Controller
     {
         $imei = $request->input('imei');
 
-        $stock = Stock::where(function ($q) use ($imei) {
-            $q->where('imei1', $imei)->orWhere('imei2', $imei);
-        })->first();
+        $stock = $this->stockService->stocksByImei($imei);
 
         if (!$stock) {
             return response()->json(['valid' => false, 'message' => 'This IMEI is not valid.']);
@@ -49,40 +51,15 @@ class RetailerController extends Controller
         ]);
     }
 
-    public function storeTertiarySales(Request $request)
+    public function storeTertiarySales(StoreTertiarySaleRequest $request)
     {
-        $request->validate([
-            'imei' => 'required|string',
-            'customer_name' => 'required|string',
-            'customer_phone' => 'required|string',
-            'customer_address' => 'required|string',
-            'remarks' => 'nullable|string',
-        ]);
+        try {
+            $this->tertiarySaleService->store($request);
 
-        $imei = $request->input('imei');
-        $stock = Stock::where(function ($q) use ($imei) {
-            $q->where('imei1', $imei)->orWhere('imei2', $imei);
-        })->first();
-
-        if (!$stock) {
-            return redirect()->back()->withErrors(['imei' => 'Invalid IMEI.']);
+            return redirect()->back()->with('success', 'Tertiary sales recorded successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['imei' => $e->getMessage()]);
         }
-
-        Tersale::create([
-            'user_id'=> auth()->id(),
-            'stock_id' => $stock->id,
-            'name' => $request->input('customer_name'),
-            'phone' => $request->input('customer_phone'),
-            'address' => $request->input('customer_address'),
-            'remarks' => $request->input('remarks', ''), // Optional field
-        ]);
-
-        $stock->status = 3;
-        $stock->save();
-
-        event(new WarrantyActivated($stock, $request->customer_phone, $request->customer_name));
-
-        return redirect()->back()->with('success', 'Tertiary sales recorded successfully.');
     }
 
 
