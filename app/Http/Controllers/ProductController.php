@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
+use App\Http\Resources\StockVerificationResource;
 use App\Models\Brand;
 use App\Models\Cat;
 use App\Models\Prisale;
@@ -15,6 +16,7 @@ use App\Models\Tersale;
 use App\Services\BrandService;
 use App\Services\CategoryService;
 use App\Services\ProductService;
+use App\Services\StockVerificationService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Carbon\Carbon;
@@ -25,16 +27,19 @@ class ProductController extends Controller
     protected $productService;
     protected $brandService;
     protected $categoryService;
+    protected $stockVerificationService;
 
     public function __construct(
         ProductService $productService,
         BrandService $brandService,
         CategoryService $categoryService,
+        StockVerificationService $stockVerificationService,
     )
     {
         $this->productService = $productService;
         $this->brandService = $brandService;
         $this->categoryService = $categoryService;
+        $this->stockVerificationService = $stockVerificationService;
     }
     //
     public function index()
@@ -98,31 +103,12 @@ class ProductController extends Controller
 
     public function verifyCheck(Request $request)
     {
-        $request->validate([
-            'imei' => 'required|string',
-        ]);
-
-        $stock = Stock::with('product.brand', 'product.cat')
-            ->where('imei1', $request->imei)
-            ->orWhere('imei2', $request->imei)
-            ->first();
-
+        $request->validate(['imei' => 'required|string']);
+        $stock = $this->stockVerificationService->verifyStockByImei($request->imei);
         if (!$stock) {
             return response()->json(['verified' => false]);
         }
-
-        return response()->json([
-            'verified' => true,
-            'product' => [
-                'name' => $stock->product->name,
-                'model' => $stock->product->model,
-                'color' => $stock->product->color,
-                'dp' => $stock->product->dp,
-                'brand' => $stock->product->brand->name ?? '-',
-                'category' => $stock->product->cat->name ?? '-',
-                'stocked_at' => $stock->created_at->toDateTimeString(),
-            ],
-        ]);
+        return new StockVerificationResource($stock);
     }
 
     public function checkWarranty()
