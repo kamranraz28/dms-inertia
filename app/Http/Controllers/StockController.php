@@ -2,59 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Sale\StoreStockRequest;
 use App\Models\Product;
 use App\Models\Stock;
+use App\Services\ProductService;
+use App\Services\StockService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class StockController extends Controller
 {
     //
+    protected $stockService, $productService;
+    public function __construct(StockService $stockService, ProductService $productService)
+    {
+        $this->stockService = $stockService;
+        $this->productService = $productService;
+    }
     public function index()
     {
-        $stocks = Stock::with('product')->get();
-
         return Inertia::render('Stocks/Index', [
-            'stocks' => $stocks,
+            'stocks' => $this->stockService->allStocks(),
         ]);
     }
 
     public function create()
     {
-        $products = Product::all();
-
         return Inertia::render('Stocks/Create', [
-            'products' => $products,
+            'products' => $this->productService->allProducts(),
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreStockRequest $request)
     {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'stocks' => 'required|array|min:1',
-            'stocks.*.imei1' => 'required|string',
-            'stocks.*.imei2' => 'required|string',
-            'stocks.*.warranty' => 'required|string',
-        ]);
-
-        foreach ($request->stocks as $item) {
-            Stock::create([
-                'product_id' => $request->product_id,
-                'imei1' => $item['imei1'],
-                'imei2' => $item['imei2'],
-                'warranty' => $item['warranty'],
-            ]);
-        }
-
+        $this->stockService->storeStocks($request->validated());
         return redirect()->route('stocks.index')->with('success', 'Stocks created successfully.');
     }
     public function show($id)
     {
-        $stock = Stock::with('product')->findOrFail($id);
-
         return Inertia::render('Stocks/Show', [
-            'stock' => $stock,
+            'stock' => $this->stockService->findById($id),
         ]);
     }
 

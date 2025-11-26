@@ -18,4 +18,13 @@ class StockRepository
             ->orWhere('imei2', $imei)
             ->first();
     }
+
+    public function findById($id)
+    {
+        return Stock::find($id);
+    }
+    public function create(array $data)
+    {
+        return Stock::create($data);
+    }
 }
