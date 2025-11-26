@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
-use App\Http\Resources\StockVerificationResource;
 use App\Models\Brand;
 use App\Models\Cat;
 use App\Models\Prisale;
@@ -103,12 +102,28 @@ class ProductController extends Controller
 
     public function verifyCheck(Request $request)
     {
-        $request->validate(['imei' => 'required|string']);
+        $request->validate([
+            'imei' => 'required|string',
+        ]);
+
         $stock = $this->stockVerificationService->verifyStockByImei($request->imei);
+
         if (!$stock) {
             return response()->json(['verified' => false]);
         }
-        return new StockVerificationResource($stock);
+
+        return response()->json([
+            'verified' => true,
+            'product' => [
+                'name' => $stock->product->name,
+                'model' => $stock->product->model,
+                'color' => $stock->product->color,
+                'dp' => $stock->product->dp,
+                'brand' => $stock->product->brand->name ?? '-',
+                'category' => $stock->product->cat->name ?? '-',
+                'stocked_at' => $stock->created_at->toDateTimeString(),
+            ],
+        ]);
     }
 
     public function checkWarranty()
