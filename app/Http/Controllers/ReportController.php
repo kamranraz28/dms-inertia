@@ -8,6 +8,11 @@ use App\Models\Secsale;
 use App\Models\Stock;
 use App\Models\Tersale;
 use App\Models\User;
+use App\Services\PrimarySaleService;
+use App\Services\ProductService;
+use App\Services\SecondarySaleService;
+use App\Services\TertiarySaleService;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -15,36 +20,45 @@ use Inertia\Inertia;
 class ReportController extends Controller
 {
     //
+    protected $primarySaleService, $userService;
+    protected $secondarySaleService;
+    protected $tertiarySaleService;
+    protected $productService;
+    public function __construct(
+        PrimarySaleService $primarySaleService,
+        UserService $userService,
+        SecondarySaleService $secondarySaleService,
+        TertiarySaleService $tertiarySaleService,
+        ProductService $productService,
+    )
+    {
+        $this->primarySaleService = $primarySaleService;
+        $this->userService = $userService;
+        $this->secondarySaleService = $secondarySaleService;
+        $this->tertiarySaleService = $tertiarySaleService;
+        $this->productService = $productService;
+    }
     public function primarySalesReport()
     {
-        $primarySales = Prisale::with('user','stock.product')->get();
-        $dealers = User::role('Dealer')->get();
-
         return Inertia::render('Reports/Admin/PrimarySalesReport',[
-            'primarySales' => $primarySales,
-            'dealers' => $dealers
+            'primarySales' => $this->primarySaleService->allPrimarySales(),
+            'dealers' => $this->userService->dealers(),
         ]);
     }
 
     public function secondarySalesReport()
     {
-        $secondarySales = Secsale::with('dealer','retailer','stock.product')->get();
-        $dealers= User::role('Dealer')->get();
-        $retailers= User::role('Retailer')->get();
-
         return Inertia::render('Reports/Admin/SecondarySalesReport',[
-            'secondarySales' => $secondarySales,
-            'dealers' => $dealers,
-            'retailers' => $retailers,
+            'secondarySales' => $this->secondarySaleService->allSecondarySales(),
+            'dealers' => $this->userService->dealers(),
+            'retailers' => $this->userService->retailers(),
         ]);
     }
 
     public function tertiarySalesReport()
     {
-        $tertiarySales = Tersale::with('user','stock.product')->get();
-
         return Inertia::render('Reports/Admin/TertiarySalesReport',[
-            'tertiarySales' => $tertiarySales,
+            'tertiarySales' => $this->tertiarySaleService->allTertiarySales(),
         ]);
     }
 
@@ -55,13 +69,11 @@ class ReportController extends Controller
                 $query->where('status', 1);
             })
             ->get();
-        $dealers = User::role('Dealer')->get();
-        $products = Product::all();
 
         return Inertia::render('Reports/Admin/DealerImeiStockReport', [
             'dealerStocks' => $dealerStocks,
-            'dealers' => $dealers,
-            'products' => $products
+            'dealers' => $this->userService->dealers(),
+            'products' => $this->productService->allProducts(),
         ]);
     }
 
