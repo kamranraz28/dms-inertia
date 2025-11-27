@@ -41,4 +41,9 @@ class StockRepository
     {
         return Stock::create($data);
     }
+    public function statusUpdate($id, $status)
+    {
+        return Stock::where('id', $id)
+            ->update(['status' => $status]);
+    }
 }

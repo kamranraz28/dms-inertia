@@ -33,4 +33,8 @@ class PrimaryRepository
                       })
                       ->get();
     }
+    public function deleteByStock($stockId)
+    {
+        return Prisale::where('stock_id', $stockId)->delete();
+    }
 }

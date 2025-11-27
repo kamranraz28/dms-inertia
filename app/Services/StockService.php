@@ -28,10 +28,9 @@ class StockService
         return $this->stockRepository->findStockDetailsByImei($imei);
     }
 
-    public function statusUpdate($stock, $status)
+    public function statusUpdate($id, $status)
     {
-        $stock->status = $status;
-        $stock->save();
+        return $this->stockRepository->statusUpdate($id, $status);
     }
 
     public function findById($id)

@@ -11,12 +11,18 @@ use App\Models\ReturnProduct;
 use App\Models\Secsale;
 use App\Models\Stock;
 use App\Models\Tersale;
+use App\Services\ReturnProductService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ReturnController extends Controller
 {
     //
+    protected $returnProductService;
+    public function __construct(ReturnProductService $returnProductService)
+    {
+        $this->returnProductService = $returnProductService;
+    }
     public function returnProduct()
     {
         $returnProducts = ReturnProduct::with('dealer', 'retailer', 'stock.product')
@@ -138,33 +144,18 @@ class ReturnController extends Controller
 
     public function returnProductList()
     {
-        $returnProducts = ReturnProduct::with('dealer', 'retailer', 'stock.product')->get();
-
         return Inertia::render('Returns/Admin/Index', [
-            'returnProducts' => $returnProducts
+            'returnProducts' => $this->returnProductService->allReturnProducts()
         ]);
     }
     public function approve($id)
     {
-        //dd($id);
-        $return = ReturnProduct::findOrFail($id);
-        $return->status = 2;
-        $return->save();
-
-        Stock::findOrFail($return->stock_id)->update([
-            'status' => 0
-        ]);
-
-        Prisale::where('stock_id', $return->stock_id)->delete();
-
+        $this->returnProductService->approveReturnProduct($id);
         return back()->with('success', 'Return product request approved.');
     }
     public function decline($id)
     {
-        $return = ReturnProduct::findOrFail($id);
-        $return->status = 5;
-        $return->save();
-
+        $this->returnProductService->declineReturnProduct($id);
         return back()->with('success', 'Return product request declined.');
     }
 

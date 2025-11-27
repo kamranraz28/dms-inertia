@@ -29,4 +29,8 @@ class PrimarySaleService
     {
         return $this->primarySaleRepository->primaryStocksByUser(auth()->id());
     }
+    public function deleteByStock($stockId)
+    {
+        return $this->primarySaleRepository->deleteByStock($stockId);
+    }
 }
