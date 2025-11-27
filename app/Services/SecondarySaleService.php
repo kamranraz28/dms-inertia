@@ -29,4 +29,8 @@ class SecondarySaleService
     {
         return $this->secondarySaleRepository->secondaryStockByRetailer(auth()->id());
     }
+    public function deleteByStock($stockId)
+    {
+        return $this->secondarySaleRepository->deleteByStock($stockId);
+    }
 }

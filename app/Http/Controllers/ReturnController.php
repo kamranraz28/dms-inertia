@@ -91,37 +91,15 @@ class ReturnController extends Controller
         ]);
     }
 
-    public function returnProductStore(Request $request)
+    public function returnProductStore(StoreReturnProductRequest $request)
     {
-        $validated = $request->validate([
-            'imeis' => 'required|array|min:1',
-            'imeis.*.imei' => 'required|string',
-            'remarks' => 'nullable|string',
-        ]);
-
-        foreach ($validated['imeis'] as $imeiData) {
-            $imei = $imeiData['imei'];
-
-            $stock = Stock::where('imei1', $imei)
-                ->orWhere('imei2', $imei)
-                ->first();
-
-            ReturnProduct::create([
-                'dealer_id' => auth()->id(),
-                'stock_id' => $stock->id,
-                'type' => 1,
-                'status' => 1,
-                'remarks' => $validated['remarks'],
-            ]);
-        }
-
+        $this->returnProductService->storeByDealer($request->validated());
         return redirect()->route('products.return')->with('success', 'Return product(s) saved successfully.');
-
-
     }
 
     public function action(Request $request, $id)
     {
+        $this->returnProductService->approveRetailerReturnByDealer($request,$id);
         $returnProduct = ReturnProduct::findOrFail($id);
 
         if ($request->action === 'approve') {
@@ -225,7 +203,7 @@ class ReturnController extends Controller
 
     public function returnProductRequestsStore(StoreReturnProductRequest $request)
     {
-        $this->returnProductService->store($request->validated());
+        $this->returnProductService->storeByRetailer($request->validated());
 
         return redirect()->route('products.returnRequest')->with('success', 'Return product request(s) saved successfully.');
     }

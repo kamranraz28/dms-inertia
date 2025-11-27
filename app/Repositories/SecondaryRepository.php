@@ -33,4 +33,8 @@ class SecondaryRepository
             })
             ->get();
     }
+    public function deleteByStock($stockId)
+    {
+        return Secsale::where('stock_id', $stockId)->delete();
+    }
 }

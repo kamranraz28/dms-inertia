@@ -51,4 +51,18 @@ class ReturnProductRepository
 
         return $returnProduct;
     }
+    public function approveretailerReturnByDealer($id)
+    {
+        $returnProduct = ReturnProduct::find($id);
+
+        if (!$returnProduct) {
+            return null;
+        }
+
+        $returnProduct->update([
+            'status' => 1
+        ]);
+
+        return $returnProduct;
+    }
 }
