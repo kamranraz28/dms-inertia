@@ -18,6 +18,20 @@ class StockRepository
             ->orWhere('imei2', $imei)
             ->first();
     }
+    public function findStockDetailsByImei($imei)
+    {
+        return Stock::with([
+            'product.brand',
+            'product.cat',
+            'prisales.user',
+            'secsales.retailer',
+            'tersales.user',
+        ])
+        ->where(function ($query) use ($imei) {
+            $query->where('imei1', $imei)->orWhere('imei2', $imei);
+        })
+        ->first();
+    }
 
     public function findById($id)
     {

@@ -17,4 +17,16 @@ class PrimarySaleService
     {
         return $this->primarySaleRepository->allPrimaries();
     }
+    public function availablePrimaryStock()
+    {
+        return $this->primarySaleRepository->availablePrimaryStock();
+    }
+    public function primarySalesByUser()
+    {
+        return $this->primarySaleRepository->primariesByUser(auth()->id());
+    }
+    public function primaryStockByUser()
+    {
+        return $this->primarySaleRepository->primaryStocksByUser(auth()->id());
+    }
 }
