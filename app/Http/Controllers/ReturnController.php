@@ -105,53 +105,22 @@ class ReturnController extends Controller
 
     public function checkRequestedImei(Request $request)
     {
-        $imei = $request->input('imei');
+        $result = $this->returnProductService->checkImeiRetailer($request->input('imei'));
 
-        $stock = Stock::with('product')
-            ->where(function ($query) use ($imei) {
-                $query->where('imei1', $imei)->orWhere('imei2', $imei);
-            })
-            ->first();
-
-        if (!$stock) {
+        // If not valid, return fail response
+        if (!$result['valid']) {
             return response()->json([
                 'valid' => false,
-                'error' => 'This IMEI is not available.',
+                'error' => $result['message'],
             ]);
         }
-
-        $secondarySale = Secsale::where('stock_id', $stock->id)
-            ->where('retailer_id', auth()->id())
-            ->first();
-
-        if (!$secondarySale) {
-            return response()->json([
-                'valid' => false,
-                'error' => 'You are not eligible to return this.',
-            ]);
-        }
-
-        $tertiarySale = Tersale::where('stock_id', $stock->id)->first();
-
-        if ($tertiarySale) {
-            return response()->json([
-                'valid' => false,
-                'error' => 'This IMEI is available in Tertiary Sales, delete that first.',
-            ]);
-        }
-
-        $return = ReturnProduct::where('stock_id', $stock->id)->first();
-
-        if ($return) {
-            return response()->json([
-                'valid' => false,
-                'error' => 'This IMEI is available in returning system.',
-            ]);
-        }
+        // valid → return stock data
+        $stock = $result['stock'];
 
         return response()->json([
             'valid' => true,
             'product_model' => $stock->product->model ?? 'N/A',
+            'message' => $result['message'],
         ]);
     }
 

@@ -76,4 +76,9 @@ class TertiarySaleService
             ],
         ]);
     }
+
+    public function searchByStock($stockId)
+    {
+        return $this->tertiarySaleRepository->searchByStock($stockId);
+    }
 }

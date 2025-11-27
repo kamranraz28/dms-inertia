@@ -12,18 +12,21 @@ class ReturnProductService
     protected $primarySaleService;
     protected $retailerService;
     protected $secondarySaleService;
+    protected $tertiarySaleService;
     public function __construct(
         ReturnProductRepository $returnProductRepository,
         StockService $stockService,
         PrimarySaleService $primarySaleService,
         RetailerService $retailerService,
         SecondarySaleService $secondarySaleService,
+        TertiarySaleService $tertiarySaleService,
     ) {
         $this->returnProductRepository = $returnProductRepository;
         $this->stockService = $stockService;
         $this->primarySaleService = $primarySaleService;
         $this->retailerService = $retailerService;
         $this->secondarySaleService = $secondarySaleService;
+        $this->tertiarySaleService = $tertiarySaleService;
     }
     public function allReturnProducts()
     {
@@ -110,10 +113,59 @@ class ReturnProductService
         }
 
         $secondarySale = $this->secondarySaleService->searchBystock($stock->id);
-        if (!$secondarySale) {
+        if ($secondarySale) {
             return [
                 'valid' => false,
                 'message' => 'This IMEI is available in Secondary Sales, delete that first.',
+            ];
+        }
+
+        $returnProduct = $this->returnProductRepository->searchByStock($stock->id);
+        if ($returnProduct) {
+            return [
+                'valid' => false,
+                'message' => 'This IMEI is available in returning system.',
+            ];
+        }
+
+        return [
+            'valid' => true,
+            'stock' => $stock,
+            'message' => 'IMEI is Valid',
+        ];
+    }
+    public function checkImeiRetailer($imei)
+    {
+        $stock = $this->stockService->stocksByImei($imei);
+
+        if (!$stock) {
+            return [
+                'valid' => false,
+                'message' => 'This IMEI is not available.',
+            ];
+        }
+
+        $primarySale = $this->primarySaleService->searchByDealerStock($stock->id);
+        if (!$primarySale) {
+            return [
+                'valid' => false,
+                'message' => 'You are not eligible to return this.',
+            ];
+        }
+
+        $secondarySale = $this->secondarySaleService->searchByRetailerStock($stock->id);
+        if (!$secondarySale) {
+            return [
+                'valid' => false,
+                'error' => 'You are not eligible to return this.',
+            ];
+        }
+
+        $tertiarySale = $this->tertiarySaleService->searchByStock($stock->id);
+        if ($tertiarySale) {
+            return [
+                'valid' => false,
+                'error' => 'This IMEI is available in Tertiary Sales, delete that first.',
             ];
         }
 

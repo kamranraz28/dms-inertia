@@ -21,6 +21,10 @@ class SecondarySaleService
     {
         return $this->secondarySaleRepository->searchBystock($stockId);
     }
+    public function searchByRetailerStock($stockId)
+    {
+        return $this->secondarySaleRepository->searchByRetailerStock(auth()->id(),$stockId);
+    }
     public function availableSecondaryStock()
     {
         return $this->secondarySaleRepository->availableSecondaryStock();

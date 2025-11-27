@@ -18,6 +18,12 @@ class TertiaryRepository
             ->first();
     }
 
+    public function searchByStock($stockId)
+    {
+        return Tersale::where('stock_id', $stockId)
+            ->first();
+    }
+
     public function create(array $data)
     {
         return Tersale::create($data);
