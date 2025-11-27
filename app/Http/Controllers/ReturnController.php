@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreReturnProductRequest;
 use App\Models\Brand;
 use App\Models\Cat;
 use App\Models\Prisale;
@@ -161,12 +162,8 @@ class ReturnController extends Controller
 
     public function returnProductRequest()
     {
-        $returnProducts = ReturnProduct::with('dealer', 'retailer', 'stock.product')
-            ->where('retailer_id', auth()->id())
-            ->get();
-
         return Inertia::render('Returns/Retailer/Index', [
-            'returnProducts' => $returnProducts
+            'returnProducts' => $this->returnProductService->returnByRetailer(auth()->id())
         ]);
     }
     public function returnProductRequestCreate()
@@ -226,37 +223,11 @@ class ReturnController extends Controller
         ]);
     }
 
-    public function returnProductRequestsStore(Request $request)
+    public function returnProductRequestsStore(StoreReturnProductRequest $request)
     {
-        $validated = $request->validate([
-            'imeis' => 'required|array|min:1',
-            'imeis.*.imei' => 'required|string',
-            'remarks' => 'nullable|string',
-        ]);
-
-        foreach ($validated['imeis'] as $imeiData) {
-            $imei = $imeiData['imei'];
-
-            $stock = Stock::where('imei1', $imei)
-                ->orWhere('imei2', $imei)
-                ->first();
-
-            $dealerId = Retailer::where('retailer_id', auth()->id())
-                ->first()
-                    ?->dealer_id;
-
-            ReturnProduct::create([
-                'dealer_id' => $dealerId,
-                'retailer_id' => auth()->id(),
-                'stock_id' => $stock->id,
-                'type' => 1,
-                'remarks' => $validated['remarks'],
-            ]);
-        }
+        $this->returnProductService->store($request->validated());
 
         return redirect()->route('products.returnRequest')->with('success', 'Return product request(s) saved successfully.');
-
-
     }
 
 }

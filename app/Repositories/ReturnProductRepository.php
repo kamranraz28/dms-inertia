@@ -12,6 +12,16 @@ class ReturnProductRepository
         return ReturnProduct::with('dealer', 'retailer', 'stock.product')
             ->get();
     }
+    public function create(array $data)
+    {
+        return ReturnProduct::create($data);
+    }
+    public function returnByRetailer($retailerId)
+    {
+        return ReturnProduct::with('dealer', 'retailer', 'stock.product')
+            ->where('retailer_id', $retailerId)
+            ->get();
+    }
     public function approveReturnProduct($id)
     {
         $returnProduct = ReturnProduct::find($id);
