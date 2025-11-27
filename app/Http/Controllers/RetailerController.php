@@ -42,7 +42,7 @@ class RetailerController extends Controller
         }
 
         if ($stock->status == 3) {
-            return response()->json(['valid' => false, 'message' => 'This IMEI is not valid.']);
+            return response()->json(['valid' => false, 'message' => 'Warranty is already activated for this IMEI.']);
         }
 
         return response()->json([
