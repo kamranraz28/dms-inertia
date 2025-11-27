@@ -17,6 +17,10 @@ class PrimarySaleService
     {
         return $this->primarySaleRepository->allPrimaries();
     }
+    public function searchByDealerStock($imei)
+    {
+        return $this->primarySaleRepository->searchByDealerStock(auth()->id(),$imei);
+    }
     public function availablePrimaryStock()
     {
         return $this->primarySaleRepository->availablePrimaryStock();

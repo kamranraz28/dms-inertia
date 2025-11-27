@@ -10,6 +10,16 @@ class PrimaryRepository
     {
         return Prisale::with('stock.product', 'user')->get();
     }
+    public function searchBystock($stockId)
+    {
+        return Prisale::where('stock_id',$stockId)->first();
+    }
+    public function searchByDealerStock($dealerId,$stockId)
+    {
+        return Prisale::where('user_id',$dealerId)
+            ->where('stock_id',$stockId)
+            ->first();
+    }
     public function availablePrimaryStock()
     {
         return Prisale::with('stock.product', 'user')

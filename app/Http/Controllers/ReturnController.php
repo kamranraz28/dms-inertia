@@ -13,6 +13,7 @@ use App\Models\Secsale;
 use App\Models\Stock;
 use App\Models\Tersale;
 use App\Services\ReturnProductService;
+use App\Services\StockService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -20,8 +21,9 @@ class ReturnController extends Controller
 {
     //
     protected $returnProductService;
-    public function __construct(ReturnProductService $returnProductService)
-    {
+    public function __construct(
+        ReturnProductService $returnProductService,
+    ) {
         $this->returnProductService = $returnProductService;
     }
     public function returnProduct()
@@ -41,53 +43,22 @@ class ReturnController extends Controller
 
     public function checkImei(Request $request)
     {
-        $imei = $request->input('imei');
+        $result = $this->returnProductService->checkImei($request->input('imei'));
 
-        $stock = Stock::with('product')
-            ->where(function ($query) use ($imei) {
-                $query->where('imei1', $imei)->orWhere('imei2', $imei);
-            })
-            ->first();
-
-        if (!$stock) {
+        // If not valid, return fail response
+        if (!$result['valid']) {
             return response()->json([
                 'valid' => false,
-                'error' => 'This IMEI is not available.',
+                'error' => $result['message'],
             ]);
         }
-
-        $primarySale = Prisale::where('stock_id', $stock->id)
-            ->where('user_id', auth()->id())
-            ->first();
-
-        if (!$primarySale) {
-            return response()->json([
-                'valid' => false,
-                'error' => 'You are not eligible to return this.',
-            ]);
-        }
-
-        $secondarySale = Secsale::where('stock_id', $stock->id)->first();
-
-        if ($secondarySale) {
-            return response()->json([
-                'valid' => false,
-                'error' => 'This IMEI is available in Secondary Sales, delete that first.',
-            ]);
-        }
-
-        $return = ReturnProduct::where('stock_id', $stock->id)->first();
-
-        if ($return) {
-            return response()->json([
-                'valid' => false,
-                'error' => 'This IMEI is available in returning system.',
-            ]);
-        }
+        // valid → return stock data
+        $stock = $result['stock'];
 
         return response()->json([
             'valid' => true,
             'product_model' => $stock->product->model ?? 'N/A',
+            'message' => $result['message'],
         ]);
     }
 
@@ -99,24 +70,7 @@ class ReturnController extends Controller
 
     public function action(Request $request, $id)
     {
-        $this->returnProductService->approveRetailerReturnByDealer($request,$id);
-        $returnProduct = ReturnProduct::findOrFail($id);
-
-        if ($request->action === 'approve') {
-            $returnProduct->status = 1; // Approved
-
-            Stock::findOrFail($returnProduct->stock_id)->update([
-            'status' => 1
-            ]);
-
-            Secsale::where('stock_id', $returnProduct->stock_id)->delete();
-
-        } elseif ($request->action === 'decline') {
-            $returnProduct->status = 5; // Declined
-        }
-
-        $returnProduct->save();
-
+        $this->returnProductService->approveRetailerReturnByDealer($request, $id);
         return back()->with('success', 'Return product status updated.');
     }
 

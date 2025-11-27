@@ -10,6 +10,16 @@ class SecondaryRepository
     {
         return Secsale::with('stock.product', 'retailer', 'dealer')->get();
     }
+    public function searchBystock($stockId)
+    {
+        return Secsale::where('stock_id',$stockId)->first();
+    }
+    public function searchByRetailerStock($retailerId,$stockId)
+    {
+        return Secsale::where('user_id',$retailerId)
+            ->where('stock_id',$stockId)
+            ->first();
+    }
     public function availableSecondaryStock()
     {
         return Secsale::with(['stock.product', 'retailer'])

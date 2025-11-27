@@ -16,6 +16,11 @@ class ReturnProductRepository
     {
         return ReturnProduct::create($data);
     }
+    public function searchByStock($stockId)
+    {
+        return ReturnProduct::where('stock_id',$stockId)
+            ->first();
+    }
     public function returnByRetailer($retailerId)
     {
         return ReturnProduct::with('dealer', 'retailer', 'stock.product')
